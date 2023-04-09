@@ -108,7 +108,7 @@ class _LabelTextFormFieldState extends State<LabelTextFormField> {
 
   OutlineInputBorder get _border =>  OutlineInputBorder(
         borderRadius: BorderRadius.circular(30),
-        borderSide: BorderSide(
+        borderSide: const BorderSide(
           color: Color.fromRGBO(130, 130, 130, 1),
           width: 0.5,
         ),
@@ -204,7 +204,7 @@ class _LabelTextFormFieldState extends State<LabelTextFormField> {
           style: widget.style ??  TextStyle(
                 color: Colors.black.withOpacity(.8),
                 fontSize: 14,
-                fontWeight: FontWeight.w500),
+                fontWeight: FontWeight.w400),
           onSaved: widget.onSaved,
           textInputAction: widget.textInputAction,
           autofocus: widget.autofocus,

@@ -6,5 +6,15 @@ class LocalStorage {
   void init() {
     introdata.writeIfNull("display", false);
     introdata.writeIfNull("loggedinbefore", false);
+    introdata.write("access", '');
+    introdata.write("user_id", '');
+  }
+
+  static getToken() {
+    return GetStorage().read("access");
+  }
+
+  static getUserId() {
+    return GetStorage().read("user_id");
   }
 }

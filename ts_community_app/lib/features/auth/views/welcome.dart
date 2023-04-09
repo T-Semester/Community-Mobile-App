@@ -18,11 +18,9 @@ class Welcome extends StatelessWidget {
             padding:
             const EdgeInsets.only(left: 20.0, right: 20, top: 20, bottom: 50),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CustomSvg(assetName: welcomeSvg,
-                  height: 200,
-                  width: 200,),
+                Image.asset('assets/images/welcome.png'),
                 const SizedBox(
                   height: 20,
                 ),

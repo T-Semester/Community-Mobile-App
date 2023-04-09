@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ts_community_app/common/helpers/custom_svg.dart';
-import 'package:ts_community_app/common/widgets/colors.dart';
-import 'package:ts_community_app/common/helpers/assets.dart';
 import 'package:get/get.dart';
-import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
-
+import 'package:ts_community_app/common/widgets/colors.dart';
+import 'package:ts_community_app/features/auth/views/login.dart';
 
 class ResetSuccessful extends StatelessWidget {
   const ResetSuccessful({
@@ -12,8 +9,6 @@ class ResetSuccessful extends StatelessWidget {
   }) : super(key: key);
 
  // final _authController = Get.find<AuthController>();
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,9 +20,7 @@ class ResetSuccessful extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CustomSvg(assetName: successSvg,
-                  height: 200,
-                  width: 200,),
+                Image.asset('assets/images/reset_success.png'),
                 const SizedBox(
                   height: 20,
                 ),
@@ -43,14 +36,19 @@ class ResetSuccessful extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                 Text(
-                  'Continue to Login',
-                  style: TextStyle(
-                    fontSize: 14, 
-                    color: primaryColor,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                 GestureDetector(
+                   onTap: (){
+                     Get.offAll(() => const Login());
+                   },
+                   child: Text(
+                     'Continue to Login',
+                     style: TextStyle(
+                       fontSize: 14,
+                       color: primaryColor,
+                     ),
+                     textAlign: TextAlign.center,
+                   ),
+                 ),
               ],
             ),
           )),

@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ts_community_app/common/helpers/custom_svg.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
-import 'package:ts_community_app/features/auth/views/login.dart';
 import 'package:ts_community_app/common/widgets/round_button.dart';
-import 'package:ts_community_app/features/auth/views/reset_successful.dart';
-
+import 'package:ts_community_app/features/auth/views/register_with_google.dart';
+import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
+import 'package:ts_community_app/features/auth/views/login.dart';
 import '../../../common/widgets/textform_field.dart';
 
 class Register extends StatefulWidget {
-  const Register({Key? key,}) : super(key: key);
-
+  const Register({Key? key}) : super(key: key);
 
   @override
   State<Register> createState() => _RegisterState();
@@ -19,6 +17,9 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   final introdata = GetStorage();
+
+  final _authController = Get.find<AuthController>();
+
 
   String? selectedValue;
   final TextEditingController _emailController = TextEditingController();
@@ -29,9 +30,22 @@ class _RegisterState extends State<Register> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   bool obscurePassword = false;
   bool terms = false;
+
   final _formKey = GlobalKey<FormState>();
   RegExp pass_valid = RegExp(r"(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W)");
   double password_strength = 0;
+
+
+  void _submitEmail() {
+    final enteredEmail = _emailController.text;
+    Navigator.pushNamed(
+      context,
+      '/VerifyLogin',
+      arguments: enteredEmail,
+    );
+  }
+
+
 
   bool validatePassword(String pass) {
     String _password = pass.trim();
@@ -82,7 +96,7 @@ class _RegisterState extends State<Register> {
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 30.0, vertical: 15),
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -154,6 +168,7 @@ class _RegisterState extends State<Register> {
                         LabelTextFormField(
                           hintText: 'Email Address',
                           controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value != '') {
                               return null;
@@ -246,21 +261,6 @@ class _RegisterState extends State<Register> {
                         const SizedBox(
                           height: 10,
                         ),
-                        LinearProgressIndicator(
-                          value: password_strength,
-                          backgroundColor: Colors.grey[300],
-                          minHeight: 5,
-                          color: password_strength <= 1 / 4
-                              ? Colors.red
-                              : password_strength == 2 / 4
-                              ? Colors.yellow
-                              : password_strength == 3 / 4
-                              ? Colors.blue
-                              : primaryColor,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
                         Row(
                           children: [
                             Checkbox(
@@ -286,7 +286,7 @@ class _RegisterState extends State<Register> {
                                         fontSize: 11),
                                     children: <TextSpan>[
                                       TextSpan(
-                                          text: '  Terms and Conditions',
+                                          text: '  Terms & Conditions',
                                           style: TextStyle(
                                               color: primaryColor,
                                               fontSize: 12))
@@ -300,42 +300,27 @@ class _RegisterState extends State<Register> {
                         const SizedBox(
                           height: 20,
                         ),
-                        // Container(
-                        //   child: GestureDetector(
-                        //     onTap: (){
-                        //
-                        //     },
-                        //     child: Container(
-                        //       height: 50,
-                        //       decoration: const BoxDecoration(
-                        //         gradient: LinearGradient(
-                        //           begin: Alignment.centerLeft,
-                        //           end: Alignment.centerRight,
-                        //           colors: [Colors.blue, Colors.blueAccent],
-                        //         ),
-                        //         borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                        //       ),
-                        //       child: const Center(
-                        //         child: Text('Register',
-                        //           style: TextStyle(fontWeight: FontWeight.bold,
-                        //               color: Colors.white, fontSize: 18.0),),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                         RoundedButtonWidget(
                             buttonText: 'Register',
+                            loading: _authController.isLoading.value,
                             width: double.infinity,
                             onpressed: () {
-
-                            }),
+                      if (_formKey.currentState!.validate() || terms) {
+                        _authController.register(
+                            firstName: _firstNameController.text,
+                            lastName: _lastNameController.text,
+                            emailAddress: _emailController.text,
+                            username: _userNameController.text,
+                            password: _passwordController.text);
+                                 }
+                         }),
                         const SizedBox(
                           height: 10,
                         ),
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              Get.to(() =>const Login());
+                              Get.offAll(() => const Login());
                             },
                             child: RichText(
                               text: TextSpan(
@@ -374,9 +359,15 @@ class _RegisterState extends State<Register> {
                                     const SizedBox(
                                       width: 10,
                                     ),
-                                    const Text('Register with Google',
-                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
-                                          color: Color(0XFF263238)),),
+                                    GestureDetector(
+                                      onTap: (){
+                                        Get.to(() =>const RegisterWithGoogle());
+                                      },
+                                      child: const Text('Register with Google',
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,
+                                              color: Color(0XFF263238)),
+                                    ),
+                                    ),
                                   ],
                                 ),
                               ),

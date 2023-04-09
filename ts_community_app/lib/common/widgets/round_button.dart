@@ -5,11 +5,14 @@ class RoundedButtonWidget extends StatelessWidget {
   final String buttonText;
   final double width;
   final Function onpressed;
+  final bool loading;
 
-  const RoundedButtonWidget({Key? key,
+  const RoundedButtonWidget({
+    Key? key,
     required this.buttonText,
     required this.width,
     required this.onpressed,
+    this.loading = false,
   }) : super(key: key);
 
   @override
@@ -24,7 +27,7 @@ class RoundedButtonWidget extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          stops:  [0.0, 1.0],
+          stops: [0.0, 1.0],
           colors: [
             Color.fromRGBO(10, 102, 194, 1),
             Color.fromRGBO(3, 4, 94, 1)
@@ -41,28 +44,37 @@ class RoundedButtonWidget extends StatelessWidget {
             ),
           ),
           minimumSize: MaterialStateProperty.all(Size(width, 50)),
-          backgroundColor:
-          MaterialStateProperty.all(Colors.transparent),
+          backgroundColor: MaterialStateProperty.all(Colors.transparent),
           // elevation: MaterialStateProperty.all(3),
-          shadowColor:
-          MaterialStateProperty.all(Colors.transparent),
+          shadowColor: MaterialStateProperty.all(Colors.transparent),
         ),
         onPressed: () {
-          onpressed();
+          if (loading) {
+          } else {
+            onpressed();
+          }
         },
         child: Padding(
           padding: const EdgeInsets.only(
             top: 10,
             bottom: 10,
           ),
-          child: Text(
-            buttonText,
-            style: TextStyle(
-              fontSize: 18,
-              // fontWeight: FontWeight.w700,
-              color: Colors.white,
-            ),
-          ),
+          child: loading
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Text(
+                  buttonText,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    // fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
         ),
       ),
     );

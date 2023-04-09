@@ -14,7 +14,7 @@ class DialogHelper {
             children: [
               Text(
                 title,
-                style: Get.textTheme.headline4,
+                style: const TextStyle(fontSize: 18, color: Colors.black)
               ),
               Text(
                 description ?? '',

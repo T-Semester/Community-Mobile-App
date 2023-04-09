@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ts_community_app/features/community/views/communities.dart';
 import 'package:ts_community_app/features/profile/views/profile.dart';
 import 'package:ts_community_app/features/search/views/search.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
 import 'package:ts_community_app/common/helpers/custom_svg.dart';
+import 'package:ts_community_app/features/profile/model/profile_model.dart';
+import 'package:ts_community_app/features/profile/controller/profile_controller.dart';
+import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({Key? key}) : super(key: key);
@@ -14,11 +19,13 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
   int pageIndex = 0;
+  final AuthController _authControllerController = Get.put(AuthController());
+
 
   List<Widget> pages = const [
     Community(),
     Search(),
-    ProfileScreen()
+    ProfileScreen(),
   ];
   @override
   Widget build(BuildContext context) {

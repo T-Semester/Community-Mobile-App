@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:ts_community_app/common/helpers/custom_svg.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
-import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 import 'package:ts_community_app/common/widgets/round_button.dart';
+import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 import 'package:ts_community_app/features/auth/views/register.dart';
-import 'package:ts_community_app/features/auth/views/reset_password.dart';
+
 import '../../../common/widgets/textform_field.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -23,12 +22,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final TextEditingController _emailController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  final _authController = Get.put(AuthController);
+  final AuthController _authController = Get.put(AuthController());
+
+  bool validateEmail(String email) {
+    final valid_email = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return valid_email.hasMatch(email);
+  }
 
 
   @override
   void initState() {
-    _emailController.text = introdata.read('lastLoginEmail') ?? '';
     super.initState();
   }
 
@@ -46,7 +49,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 30.0, vertical: 15),
+              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -84,31 +87,44 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         LabelTextFormField(
                           hintText: 'Your Email',
                           controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (val){
+                            validateEmail(val);
+                          },
                           validator: (value) {
-                            if (value != '') {
-                              return null;
-                            } else {
+                            if (value == '') {
                               return "Field cannot be empty";
+                            } else {
+                              bool result = validateEmail(value!);
+                              if(result) {
+                                return null;
+                              } else {
+                                return "Email format not correct";
+                              }
                             }
                           },
                         ),
                         const SizedBox(
                           height: 40,
                         ),
-                        RoundedButtonWidget(
-                            buttonText: 'Reset',
-                            width: double.infinity,
-                            onpressed: () {
-                               Get.to(() => const ResetPassword());
-                            }),
-
+                        Obx(
+                                () => RoundedButtonWidget(
+                                    loading: _authController.isLoading.value,
+                                    buttonText: 'Reset',
+                                    width: double.infinity,
+                                    onpressed: () {
+                               if(_formKey.currentState!.validate()){
+                                   _authController.forgotPassword(
+                                 email: _emailController.text);
+                                    }
+                                   })),
                         const SizedBox(
                           height: 20,
                         ),
                         Center(
                           child: TextButton(
                             onPressed: () {
-                              Get.to(() =>const Register());
+                              Get.offAll(() => const Register());
                             },
                             child: RichText(
                               text: TextSpan(
@@ -125,8 +141,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                           ),
                         ),
-
-
                       ],
                     ),
 
