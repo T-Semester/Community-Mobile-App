@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:ts_community_app/common/helpers/utils.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
+import 'package:ts_community_app/features/community/controller/communities_controller.dart';
 import 'package:ts_community_app/features/community/models/communites_model.dart';
 import 'package:ts_community_app/features/community/views/create_community.dart';
-import 'package:ts_community_app/features/community/controller/communities_controller.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:ts_community_app/common/helpers/utils.dart';
-import 'package:ts_community_app/common/helpers/get_storage.dart';
-import 'package:ts_community_app/common/helpers/assets.dart';
-import 'package:ts_community_app/common/helpers/custom_svg.dart';
+import 'package:ts_community_app/features/community/views/community_details.dart';
+import 'package:ts_community_app/features/community/models/communities_details_model.dart';
 
 
 class Community extends StatefulWidget {
@@ -27,6 +28,8 @@ class _CommunityState extends State<Community> {
   final introdata = GetStorage();
 
 
+  File? image;
+
 
   final CommunitiesController _communitiesController =
   Get.put(CommunitiesController());
@@ -35,8 +38,10 @@ class _CommunityState extends State<Community> {
   void initState() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _communitiesController.getAllCommunities();
-    });
+      _communitiesController.getAllCommunitiesById(CommunitiesDetailsModel());
+      _refreshIndicatorKey.currentState?.show();
 
+    });
     super.initState();
   }
 
@@ -56,19 +61,25 @@ class _CommunityState extends State<Community> {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 40,
-            ),
-            Text('Communities',
-              style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 24),),
-            const SizedBox(
-              height: 30,
-            ),
-            Expanded(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        child: RefreshIndicator(
+           key: _refreshIndicatorKey,
+           onRefresh: () async {
+             _communitiesController.getAllCommunities();
+             return Future<void>.delayed(const Duration(seconds: 5));
+           },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 40,
+              ),
+              Text('Communities',
+                style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 24),),
+              const SizedBox(
+                height: 10,
+              ),
+              Expanded(
                 child: Obx((){
                   if(_communitiesController.isLoading.value){
                     return const Center(child: CircularProgressIndicator());
@@ -76,22 +87,26 @@ class _CommunityState extends State<Community> {
                     return const Center(child: Text('An error occurred'));
                   } else {
                     return ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
+                      separatorBuilder: (context, index) {
+                        return const Divider();
+                      },
                       itemCount: _communitiesController.listOfCommunities.length,
-                        itemBuilder: ((context, index){
-                          CommunitiesModel model = _communitiesController.listOfCommunities[index];
-                          return communitiesList(model);
-                        }),
+                      itemBuilder: ((context, index){
+                        CommunitiesModel communityModel = _communitiesController.listOfCommunities[index];
+                        return communitiesList(communityModel);
+                      }),
                     );
                   }
 
                 }),
-            ),
+              ),
+              const SizedBox(
+                height: 20,
+              )
 
-          ],
-        ),
+            ],
+          ),
+        )
       ),
     );
   }
@@ -99,22 +114,34 @@ class _CommunityState extends State<Community> {
   Widget communitiesList(CommunitiesModel model){
     return GestureDetector(
       onTap: (){
-
+        Get.to(() => CommunityDetails(commModel: CommunitiesDetailsModel()));
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(model.communityName!,
-          style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+          style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),),
           const SizedBox(
-            height: 5,
+            height: 10,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              //Text(model.creator!.fullName),
+              ClipOval(
+                child: CachedNetworkImage(imageUrl:'${model.creator?.imageUrl}' ,
+                height: 22,
+                width: 22,
+                  fit: BoxFit.cover,
+                ),
+              ),
               const SizedBox(
                 width: 5,
+              ),
+              Text(
+                '${model.creator?.fullName}',
+              ),
+              const SizedBox(
+                width: 10,
               ),
               Image.asset(
                 communityType(model.platform!),
@@ -122,20 +149,21 @@ class _CommunityState extends State<Community> {
                 width: 20,
               ),
               const SizedBox(
-                width: 2,
-              ),
-              Text(
-                 communityPlatform(model.platform!),
-              ),
-              const SizedBox(
                 width: 5,
               ),
               Text(
-                communityStatus(model.status!),
+                communityPlatform(model.platform!),
+                style: const TextStyle(fontSize: 14),
               ),
               const SizedBox(
-                width: 5,
+                width: 20,
               ),
+              Expanded(
+                  child: Text(
+                    communityStatus(model.status!),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 14),
+                  ))
 
             ],
           ),

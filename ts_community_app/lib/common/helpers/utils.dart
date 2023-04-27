@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
-
 
 void showSnackBar({ required String content, String? title}) {
   Get.showSnackbar(
@@ -53,3 +49,4 @@ void showSnackBar({ required String content, String? title}) {
       return "";
     }
   }
+

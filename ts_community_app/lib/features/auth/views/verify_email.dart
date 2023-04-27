@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
-import 'package:ts_community_app/features/auth/views/login.dart';
 import 'package:ts_community_app/common/widgets/round_button.dart';
-import 'package:ts_community_app/features/auth/views/register.dart';
 import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 
 class VerifyEmail extends StatefulWidget {
-  const VerifyEmail({Key? key,}) : super(key: key);
+  const VerifyEmail({Key? key, required this.emailAddress}) : super(key: key);
+
+  final String emailAddress;
 
   @override
   State<VerifyEmail> createState() => _VerifyEmailState();
@@ -16,15 +18,18 @@ class VerifyEmail extends StatefulWidget {
 
 class _VerifyEmailState extends State<VerifyEmail> {
   final introdata = GetStorage();
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _otpPinController = TextEditingController();
+
   final AuthController _authController = Get.put(AuthController());
+
+  Color get _colorBackground => Colors.white;
+
+  Color get _colorBorder => Colors.grey.withOpacity(0.3);
 
   @override
   void initState() {
-    //_emailController.text = introdata.read('lastLoginEmail') ?? '';
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +44,21 @@ class _VerifyEmailState extends State<VerifyEmail> {
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
+                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15),
               child: Column(
                 children: [
                   const SizedBox(
                     height: 10,
                   ),
-                  Text('Verify Email',
+                  Text(
+                    'Verify Email',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 24, color: primaryColor,
-                      fontWeight: FontWeight.bold,),),
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(
                     height: 3,
                   ),
@@ -61,55 +71,100 @@ class _VerifyEmailState extends State<VerifyEmail> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 30,
                   ),
-                  Image.asset('assets/images/email_inbox.png'),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                   const Text('A mail has been sent to your email address.\n'
-                       'Click on the link in the mail to verify your email',
-                    style: TextStyle(color: Colors.black),
-                    textAlign: TextAlign.center,),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Text('Resend Mail',
+                  const Text(
+                    'Please Input the OTP sent to your Email Address',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16,
+                    ),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 18, color: floatingActionButtonColor,
-                      fontWeight: FontWeight.bold,),),
-                  const SizedBox(
-                    height: 20,
                   ),
-                  Center(
-                    child: TextButton(
-                      onPressed: () {
-                        Get.to(() =>const Register());
-                      },
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'Not your email address?',
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 14),
-                          children: <TextSpan>[
-                            TextSpan(
-                                text: ' Change Email',
-                                style: TextStyle(color: floatingActionButtonColor,
-                                    fontSize: 16)),
-                          ],
-                        ),
-                      ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  PinCodeTextField(
+                    autovalidateMode: AutovalidateMode.disabled,
+                    validator: (value) {
+                      if (value == '') {
+                        return "Pin cannot be empty";
+                      } else if (value!.length < 6) {
+                        return 'Enter your 6 digit Pin';
+                      } else {
+                        return null;
+                      }
+                    },
+                    onChanged: (value) {},
+                    cursorColor: Colors.black,
+                    appContext: context,
+                    length: 6,
+                    controller: _otpPinController,
+                    backgroundColor: Colors.transparent,
+                    enableActiveFill: false,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    autoDisposeControllers: false,
+                    enablePinAutofill: true,
+                    autoFocus: false,
+                    pinTheme: PinTheme(
+                      errorBorderColor: Colors.red,
+                      borderRadius: BorderRadius.circular(8),
+                      borderWidth: 1,
+                      fieldWidth: 46,
+                      fieldHeight: 48,
+                      activeColor: _colorBorder,
+                      activeFillColor: _colorBackground,
+                      inactiveColor: _colorBorder,
+                      selectedColor: _colorBorder,
+                      inactiveFillColor: Colors.white,
+                      selectedFillColor: Colors.white,
+                      shape: PinCodeFieldShape.box,
                     ),
                   ),
                   const SizedBox(
+                    height: 80,
+                  ),
+                  Obx(
+                    () => RoundedButtonWidget(
+                        loading: _authController.isLoading.value,
+                        buttonText: 'Verify',
+                        width: double.infinity,
+                        onpressed: () {
+                          if (_otpPinController.text.length == 6) {
+                            _authController.verifyEmail(
+                              widget.emailAddress,
+                              int.parse(_otpPinController.text),
+                            );
+                          }
+                        }),
+                  ),
+                  const SizedBox(
                     height: 20,
                   ),
-                  RoundedButtonWidget(
-                      buttonText: 'Login',
-                      width: double.infinity,
-                      onpressed: (){
-                        Get.offAll(() => const Login());
-                      }),
+                  // Center(
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       _authController.resendOtp(widget.emailAddress);
+                  //     },
+                  //     child: RichText(
+                  //       text: TextSpan(
+                  //         text: 'Did not get OTP?',
+                  //         style: TextStyle(color: grey, fontSize: 15),
+                  //         children: <TextSpan>[
+                  //           TextSpan(
+                  //               text: '  Resend',
+                  //               style: TextStyle(
+                  //                   color: primaryColor, fontSize: 15))
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // const SizedBox(
+                  //   height: 30,
+                  // ),
                 ],
               ),
             ),
@@ -119,4 +174,3 @@ class _VerifyEmailState extends State<VerifyEmail> {
     );
   }
 }
-

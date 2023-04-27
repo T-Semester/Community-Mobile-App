@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+
 
 class ProfileModel {
   String? id;
@@ -7,6 +9,7 @@ class ProfileModel {
   String? emailAddress;
   String? userName;
   String? bio;
+  String? profileImage;
 
   ProfileModel({
     this.id,
@@ -15,17 +18,40 @@ class ProfileModel {
     this.emailAddress,
     this.userName,
     this.bio,
+    this.profileImage,
 });
 
   Map<String, dynamic> toMap() {
-    return {
-      "id": id,
-      "first_name": firstName,
-      "last_name": lastName,
-      "email": emailAddress,
-      "username": userName,
-      "bio": bio,
-    };
+    final result = <String, dynamic>{};
+
+    if(id != null) {
+      result.addAll({'id': id});
+    }
+    if(firstName !=null){
+      result.addAll({'first_name': firstName});
+    }
+    if(lastName != null){
+      result.addAll({'last_name':lastName});
+    }
+    if(userName != null){
+      result.addAll({'username': userName});
+    }
+    if(profileImage !=null){
+      result.addAll({'image_url': profileImage});
+    }
+    if(bio != null){
+      result.addAll({'bio': bio});
+    }
+    return result;
+    // return {
+    //   "id": id,
+    //   "first_name": firstName,
+    //   "last_name": lastName,
+    //   "email": emailAddress,
+    //   "username": userName,
+    //   "bio": bio,
+    //   "image_url": profileImage,
+    // };
   }
 
   factory ProfileModel.fromMap(Map<String, dynamic> map) {
@@ -36,6 +62,7 @@ class ProfileModel {
       emailAddress: map['email'],
       userName: map['username'],
       bio: map['bio'],
+      profileImage: map['image_url'],
     );
   }
 
@@ -43,5 +70,11 @@ class ProfileModel {
 
   String toJson() => json.encode(toMap());
   factory ProfileModel.fromJson(String source) => ProfileModel.fromMap(json.decode(source));
+
+}
+
+class ImageModel {
+  File? file;
+  String? title;
 
 }

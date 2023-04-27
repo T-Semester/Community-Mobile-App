@@ -5,6 +5,8 @@ import 'package:ts_community_app/common/widgets/bottom_navbar.dart';
 import 'package:ts_community_app/common/widgets/constants/constants.dart';
 import 'package:ts_community_app/common/widgets/textform_field.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
+import 'package:ts_community_app/common/widgets/chip_input.dart';
+import 'package:flutter_chip_tags/flutter_chip_tags.dart';
 import 'package:ts_community_app/features/community/views/communities.dart';
 
 class CreateCommunity extends StatefulWidget {
@@ -15,8 +17,10 @@ class CreateCommunity extends StatefulWidget {
 }
 
 class _CreateCommunityState extends State<CreateCommunity> {
+  final GlobalKey<ChipsInputState> _chipKey = GlobalKey();
   String? selectedPlatform;
   String? selectedStatus;
+  List<String> inputValues = [];
 
   final TextEditingController _communityName = TextEditingController();
   final TextEditingController _communityDescription = TextEditingController();
@@ -38,17 +42,19 @@ class _CreateCommunityState extends State<CreateCommunity> {
       appBar: AppBar(
         title: const Text(
           'Add New Community',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(
+              color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           color: Colors.black,
           onPressed: () {
-            Get.to(() =>  const BottomBar());
+            Navigator.pop(context);
           },
         ),
         centerTitle: true,
         backgroundColor: Colors.white,
+        elevation: 0,
       ),
       backgroundColor: Colors.white,
       body: Padding(
@@ -74,20 +80,23 @@ class _CreateCommunityState extends State<CreateCommunity> {
                     height: 10,
                   ),
                   Container(
-                      height: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        border: Border.all(color: const Color.fromRGBO(130, 130, 130, 1), width: 0.5),
-                      ),
+                    height: 120,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                          color: const Color.fromRGBO(130, 130, 130, 1),
+                          width: 0.5),
+                    ),
                     child: TextField(
                       controller: _communityDescription,
                       cursorColor: grey,
+                      maxLines: null,
                       decoration: const InputDecoration(
                         hintText: 'Community Description',
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.all(10.0),
                       ),
-                  ),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -114,7 +123,8 @@ class _CreateCommunityState extends State<CreateCommunity> {
                       color: Colors.black45,
                     ),
                     iconSize: 30,
-                    style: const TextStyle(color: Color.fromRGBO(130, 130, 130, 1)),
+                    style: const TextStyle(
+                        color: Color.fromRGBO(130, 130, 130, 1)),
                     buttonHeight: 50,
                     buttonPadding: const EdgeInsets.only(left: 1, right: 10),
                     dropdownDecoration: BoxDecoration(
@@ -173,13 +183,14 @@ class _CreateCommunityState extends State<CreateCommunity> {
                       color: Colors.black45,
                     ),
                     iconSize: 30,
-                    style: const TextStyle(color: Color.fromRGBO(130, 130, 130, 1)),
+                    style: const TextStyle(
+                        color: Color.fromRGBO(130, 130, 130, 1)),
                     buttonHeight: 50,
                     buttonPadding: const EdgeInsets.only(left: 1, right: 10),
                     dropdownDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    items: communityType
+                    items: communityTypes
                         .map(
                           (item) => DropdownMenuItem<String>(
                             value: item,
@@ -208,15 +219,88 @@ class _CreateCommunityState extends State<CreateCommunity> {
                       }
                     },
                   ),
-                  if(selectedStatus != null && selectedStatus == "Open Community")
-                  openCommunity(),
-                  if(selectedStatus !=null && selectedStatus == "Closed Community")
-                  closedCommunity(),
+                  if (selectedStatus != null &&
+                      selectedStatus == "Open Community")
+                    openCommunity(),
+                  if (selectedStatus != null &&
+                      selectedStatus == "Closed Community")
+                    closedCommunity(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Wrap(
+                          children: inputValues.map((value){
+                            return InputChip(
+                              label: Text(value),
+                              onDeleted: (){
+                                setState(() {
+                                  inputValues.remove(value);
+                                });
+                              },
 
-                const SizedBox(
-                  height: 10,
-                ),
+                            );
+                          }).toList(),
+                        ),
+                        LabelTextFormField(
+                          controller: _tags,
+                          hintText: 'Tags',
+                          validator: (value) {
+                            if (value != '') {
+                              return null;
+                            } else {
+                              return "Tags cannot be empty!";
+                            }
+                          },
+                          onChanged: (value){
+                            if (value.endsWith(' ')) {
+                              setState(() {
+                                inputValues.add(value.trim()); // Add new chip
+                              });
+                              _tags.clear(); // Clear TextField
+                            }
 
+                          },
+                        ),
+
+                      ],
+                    ),
+                  ),
+                  Wrap(
+                    children: inputValues.map((value){
+                      return InputChip(
+                          label: Text(value),
+                        onDeleted: (){
+                            setState(() {
+                              inputValues.remove(value);
+                            });
+                        },
+
+                      );
+                    }).toList(),
+                  ),
+                  LabelTextFormField(
+                    controller: _tags,
+                    hintText: 'Tags',
+                    validator: (value) {
+                      if (value != '') {
+                        return null;
+                      } else {
+                        return "Tags cannot be empty!";
+                      }
+                    },
+                    onChanged: (value){
+                      if (value.endsWith(' ')) {
+                        setState(() {
+                          inputValues.add(value.trim()); // Add new chip
+                        });
+                        _tags.clear(); // Clear TextField
+                      }
+
+                    },
+                  ),
 
                 ],
               ),
@@ -225,7 +309,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
     );
   }
 
-    Widget openCommunity() {
+  Widget openCommunity() {
     return Column(
       children: [
         const SizedBox(
@@ -234,7 +318,8 @@ class _CreateCommunityState extends State<CreateCommunity> {
         LabelTextFormField(
           controller: _inviteLink,
           hintText: 'Invite Link/Instructions',
-          labelstyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+          labelstyle:
+              const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
           validator: (value) {
             if (value == null) {
               return 'Invite link is required!';
@@ -247,17 +332,18 @@ class _CreateCommunityState extends State<CreateCommunity> {
     );
   }
 
-
- Widget closedCommunity() {
+  Widget closedCommunity() {
     return Column(
       children: [
         const SizedBox(
-          height: 10,
+          height: 20,
         ),
         LabelTextFormField(
           controller: _instructions,
-          hintText: 'Instructions to join(email or phone number of group admin)',
-          labelstyle: const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
+          hintText:
+              'Instructions to join(email or phone number of group admin)',
+          labelstyle:
+              const TextStyle(fontWeight: FontWeight.w600, color: Colors.black),
           validator: (value) {
             if (value == null) {
               return 'Field is required!';
@@ -269,6 +355,4 @@ class _CreateCommunityState extends State<CreateCommunity> {
       ],
     );
   }
-
-
 }

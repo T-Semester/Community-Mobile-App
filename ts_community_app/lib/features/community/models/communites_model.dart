@@ -1,12 +1,6 @@
 import 'dart:convert';
 
-// CommunitiesModel? communitiesModelFromJson(String str) =>
-//     CommunitiesModel.fromJson(json.decode(str));
-//
-// String communitiesModelToJson(CommunitiesModel? data) => json.encode(data!.toJson());
-
 class CommunitiesModel {
-
   String? id;
   String? communityName;
   String? communityDescription;
@@ -17,6 +11,7 @@ class CommunitiesModel {
   String? creatorId;
   Creator? creator;
 
+
   CommunitiesModel({
     this.id,
     this.communityName,
@@ -26,7 +21,7 @@ class CommunitiesModel {
     this.platform,
     this.status,
     this.creatorId,
-    this.creator
+    this.creator,
    });
 
   Map<String, dynamic> toMap() {
@@ -39,7 +34,7 @@ class CommunitiesModel {
       "platform": platform,
       "status": status,
       "creator_id": creatorId,
-      "creator": creator,
+      "creator": creator!.toString(),
     };
   }
 
@@ -53,6 +48,7 @@ class CommunitiesModel {
       platform: map['platform'],
       status: map['status'],
       creatorId: map['creator_id'],
+      creator: map['creator'] != null ? Creator.fromMap(map['creator']): null,
 
     );
   }
@@ -77,21 +73,15 @@ class Creator {
        this.lastName,
 });
 
-     // factory Creator.fromJson(Map<dynamic, dynamic> json) => Creator(
-     //   id: json["id"],
-     //   bio: json["bio"],
-     //   imageUrl: json["image_url"],
-     //   firstName: json["first_name"],
-     //   lastName: json["last_name"],
-     // );
-
-     Map<String, dynamic> toMap() => {
-       "id": id,
-       "bio": bio,
-       "image_url": imageUrl,
-       "first_name": firstName,
-       "last_name": lastName,
-     };
+     Map<String, dynamic> toMap() {
+       return {
+         "id": id,
+         "bio": bio,
+         "image_url": imageUrl,
+         "first_name": firstName,
+         "last_name": lastName,
+       };
+     }
 
      factory Creator.fromMap(Map<String, dynamic> map) {
        return Creator(
@@ -105,10 +95,13 @@ class Creator {
 
      String get fullName => "$firstName $lastName";
 
-    String toJson() => json.encode(toMap());
-     factory Creator.fromJson(String source) => Creator.fromMap(json.decode(source));
+    // String toJson() => json.encode(toMap());
+    //  factory Creator.fromJson(String source) => Creator.fromMap(json.decode(source));
 
-
-
+     @override
+  String toString(){
+      return 'creator(first_name: $firstName, last_name: $lastName, bio: $bio, image_url: $imageUrl)';
+     }
 
 }
+

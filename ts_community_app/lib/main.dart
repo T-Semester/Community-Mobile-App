@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -6,15 +7,12 @@ import 'package:ts_community_app/common/widgets/colors.dart';
 import 'package:ts_community_app/features/splash_screen/splash_screen.dart';
 
 Future<void> main()  async {
-  // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-  //     statusBarColor: statusBar
-  // ));
-
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitDown, DeviceOrientation.portraitUp]);
 
 
   await GetStorage.init();
+  //await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -33,6 +31,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState(){
     super.initState();
+    introdata.writeIfNull("display", false);
     introdata.write("access", '');
     introdata.write("user_id", '');
 

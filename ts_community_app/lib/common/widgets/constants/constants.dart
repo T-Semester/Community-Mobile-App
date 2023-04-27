@@ -9,7 +9,7 @@ final List<String> platform = [
   "Facebook",
 ];
 
-final List<String> communityType = [
+final List<String> communityTypes = [
   "Open Community",
   "Closed Community",
 ];

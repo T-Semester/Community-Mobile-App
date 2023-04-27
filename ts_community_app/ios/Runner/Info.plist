@@ -29,6 +29,11 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Ts Community App will like to access your photo gallery to save and upload images</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Ts Community App will like to access your photo gallery to save and upload images</string>
+
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>

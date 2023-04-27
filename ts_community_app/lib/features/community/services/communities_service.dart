@@ -17,4 +17,15 @@ class CommunitiesService {
     }
   }
 
+  Future<dynamic> getAllCommunitiesById({required String communityId}) async {
+    try {
+      return await baseClient.get(
+        "https://communities-service.talnts.app/api/v1",
+        '/communities/$communityId',
+      );
+    } catch (error) {
+      return Future.error(error);
+    }
+  }
+
 }

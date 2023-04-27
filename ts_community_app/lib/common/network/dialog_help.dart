@@ -14,11 +14,17 @@ class DialogHelper {
             children: [
               Text(
                 title,
-                style: const TextStyle(fontSize: 18, color: Colors.black)
+                style: const TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold)
+              ),
+              const SizedBox(
+                height: 10,
               ),
               Text(
                 description ?? '',
                 style: Get.textTheme.headline6,
+              ),
+              const SizedBox(
+                height: 20,
               ),
               ElevatedButton(
                 onPressed: () {

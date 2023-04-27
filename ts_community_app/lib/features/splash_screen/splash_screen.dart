@@ -7,6 +7,7 @@ import 'package:ts_community_app/common/helpers/get_storage.dart';
 import 'package:ts_community_app/common/widgets/colors.dart';
 import 'package:ts_community_app/features/auth/views/login.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ts_community_app/features/splash_screen/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     LocalStorage().init();
-    Timer(const Duration(seconds: 5), () => Get.off(() => const Login()));
+    Timer(const Duration(seconds: 5), () => Get.off(() => const OnboardingScreen()));
   }
 
   final introdata = GetStorage();
@@ -50,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     height: 100,
                   ),
                   Text(
-                    'TalntsApp',
+                    'Talnts App',
                     style: GoogleFonts.openSans(
                       fontSize: 24,
                       color: Colors.white,

@@ -1,11 +1,10 @@
 import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:ts_community_app/common/network/base_client.dart';
 import 'package:ts_community_app/common/network/base_controller.dart';
-import 'package:ts_community_app/features/auth/model/registration_model.dart';
 
-import '../../../common/helpers/get_storage.dart';
 
 class AuthService with BaseController {
   final introdata = GetStorage();
@@ -15,6 +14,7 @@ class AuthService with BaseController {
     String token = introdata.read("token");
     return token;
   }
+
 
   Map<String, String> get headers =>
       {
@@ -80,6 +80,19 @@ class AuthService with BaseController {
             "email": email,
             "new_password": password,
             "code": otpCode,
+      });
+    } catch (error) {
+      return Future.error(error);
+    }
+  }
+
+  Future<dynamic> verifyEmail(String email, int otpCode) async {
+    try {
+      return await baseClient.post(
+          url,
+          '/auth/verify-email', {
+        "email": email,
+        "code": otpCode,
       });
     } catch (error) {
       return Future.error(error);

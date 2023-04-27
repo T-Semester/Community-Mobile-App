@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:ts_community_app/common/helpers/custom_svg.dart';
+import 'package:ts_community_app/common/widgets/colors.dart';
+import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 import 'package:ts_community_app/features/community/views/communities.dart';
 import 'package:ts_community_app/features/profile/views/profile.dart';
 import 'package:ts_community_app/features/search/views/search.dart';
-import 'package:ts_community_app/common/widgets/colors.dart';
-import 'package:ts_community_app/common/helpers/custom_svg.dart';
-import 'package:ts_community_app/features/profile/model/profile_model.dart';
-import 'package:ts_community_app/features/profile/controller/profile_controller.dart';
-import 'package:ts_community_app/features/auth/controller/auth_controller.dart';
 
 class BottomBar extends StatefulWidget {
   const BottomBar({Key? key}) : super(key: key);
@@ -25,6 +22,7 @@ class _BottomBarState extends State<BottomBar> {
   List<Widget> pages = const [
     Community(),
     Search(),
+    //EditProfile(),
     ProfileScreen(),
   ];
   @override
@@ -53,7 +51,7 @@ class _BottomBarState extends State<BottomBar> {
                 border: Border(
                   top: BorderSide(
                     width: 3,
-                    color: pageIndex == 0 ?primaryColor : Colors.grey,
+                    color: pageIndex == 0 ?primaryColor : Colors.white,
                   ),
                 ),
               ),
@@ -72,7 +70,7 @@ class _BottomBarState extends State<BottomBar> {
                 border: Border(
                   top: BorderSide(
                     width: 3,
-                    color: pageIndex == 1 ? primaryColor : Colors.grey,
+                    color: pageIndex == 1 ? primaryColor : Colors.white,
                   ),
                 ),
               ),
@@ -95,7 +93,7 @@ class _BottomBarState extends State<BottomBar> {
                 border: Border(
                   top: BorderSide(
                     width: 3,
-                    color: pageIndex == 2 ? primaryColor : Colors.grey,
+                    color: pageIndex == 2 ? primaryColor : Colors.white,
                   ),
                 ),
               ),
